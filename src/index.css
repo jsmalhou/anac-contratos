@@ -92,6 +92,49 @@
     color: rgba(255, 255, 255, 0.4);
   }
 
+  /* Select / ComboBox styling - ensure visible text in dropdown */
+  .glass-input option,
+  .glass-input optgroup,
+  select.glass-input option,
+  select.glass-input optgroup {
+    background: #1B3A5C;
+    color: white;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  /* Alternative select with dark background */
+  .select-dark,
+  .select-dark option {
+    background: #1B3A5C;
+    color: white;
+  }
+
+  /* Ensure select dropdown is visible on all browsers */
+  select {
+    color: white;
+  }
+
+  select option {
+    background-color: #1B3A5C;
+    color: white;
+    padding: 8px 12px;
+  }
+
+  select option:hover,
+  select option:focus,
+  select option:active,
+  select option:checked {
+    background-color: #C9963B;
+    color: white;
+  }
+
+  /* Firefox specific */
+  select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 white;
+  }
+
   .btn-3d {
     background: linear-gradient(180deg, #C9963B 0%, #A67A2E 100%);
     border: 1px solid rgba(255, 255, 255, 0.3);
