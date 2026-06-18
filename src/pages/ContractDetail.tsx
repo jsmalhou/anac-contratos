@@ -7,6 +7,7 @@ import {
   Building2,
   User,
   History,
+  Download,
 } from "lucide-react";
 
 const statusLabels: Record<string, string> = {
@@ -225,6 +226,29 @@ export default function ContractDetail() {
           </div>
         </div>
       </div>
+
+      {/* Contract File */}
+      {contract.contractFile && (
+        <div className="glass-card p-5">
+          <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+            <FileText className="w-5 h-5 text-red-400" />
+            Documento do Contrato
+          </h3>
+          <div className="glass-dark p-4 rounded-lg flex items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-red-500/20 flex items-center justify-center">
+              <FileText className="w-6 h-6 text-red-400" />
+            </div>
+            <div className="flex-1">
+              <p className="text-white font-medium text-sm">{contract.contractFile}</p>
+              <p className="text-white/40 text-xs">Documento PDF anexado</p>
+            </div>
+            <button className="btn-3d-secondary px-4 py-2 text-sm flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Descarregar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Payments & Amendments */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
