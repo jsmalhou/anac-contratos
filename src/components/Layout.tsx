@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useDemoAuth } from "@/hooks/useDemoAuth";
 import {
   LayoutDashboard,
   FileText,
@@ -21,7 +21,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const { logout, user } = useAuth();
+  const { logout, user } = useDemoAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
