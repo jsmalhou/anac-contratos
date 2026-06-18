@@ -57,7 +57,7 @@ export default function NewContract() {
   const labelClass = "block text-white/60 text-xs uppercase tracking-wider mb-1.5";
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6" style={{ maxWidth: "90%", margin: "0 auto" }}>
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link
