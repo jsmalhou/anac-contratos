@@ -195,7 +195,7 @@ export const alerts = mysqlTable("alerts", {
 export type Alert = typeof alerts.$inferSelect;
 
 // ─── Audit Log ───
-export const auditLog = mysqlTable("auditLog", {
+export const auditLog = mysqlTable("auditlog", {
   id: serial("id").primaryKey(),
   userId: bigint("userId", { mode: "number", unsigned: true }),
   action: mysqlEnum("action", [
