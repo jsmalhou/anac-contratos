@@ -141,6 +141,7 @@ export const contractRouter = createRouter({
         pcaId: z.number(),
         departmentId: z.number(),
         createdBy: z.number(),
+        contractFile: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -160,6 +161,7 @@ export const contractRouter = createRouter({
         pcaId: input.pcaId,
         departmentId: input.departmentId,
         createdBy: input.createdBy,
+        contractFile: input.contractFile || null,
       } as any);
 
       await db.insert(auditLog).values({
