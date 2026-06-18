@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router";
-import { useAuth } from "./hooks/useAuth";
+import { useDemoAuth } from "./hooks/useDemoAuth";
 import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -15,7 +15,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useDemoAuth();
 
   if (isLoading) {
     return (
