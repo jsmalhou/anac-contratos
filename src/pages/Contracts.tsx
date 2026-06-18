@@ -160,9 +160,9 @@ export default function Contracts() {
                   </td>
                   <td>
                     <span
-                      className={`status-badge status-${c.status}`}
+                      className={`status-badge status-${c.status || "ativo"}`}
                     >
-                      {statusLabels[c.status]}
+                      {statusLabels[c.status || "ativo"] || c.status}
                     </span>
                   </td>
                   <td>
