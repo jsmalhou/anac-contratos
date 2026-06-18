@@ -8,6 +8,7 @@ import {
   payments,
   amendments,
   alerts,
+  roles,
 } from "./schema";
 
 async function seed() {
@@ -23,6 +24,15 @@ async function seed() {
     { name: "Departamento de Infraestruturas", budgetLimit: "400000000.00" },
   ]);
   console.log("Departments seeded");
+
+  // Seed roles
+  await db.insert(roles).values([
+    { name: "Administrador", description: "Acesso total ao sistema", canInsert: 1, canUpdate: 1, canDelete: 1, canPrint: 1 },
+    { name: "Gestor de Contratos", description: "Gestão de contratos e fornecedores", canInsert: 1, canUpdate: 1, canDelete: 0, canPrint: 1 },
+    { name: "Financeiro", description: "Gestão de pagamentos e relatórios", canInsert: 1, canUpdate: 1, canDelete: 0, canPrint: 1 },
+    { name: "Visualizador", description: "Apenas visualização", canInsert: 0, canUpdate: 0, canDelete: 0, canPrint: 1 },
+  ]);
+  console.log("Roles seeded");
 
   // Seed suppliers
   await db.insert(suppliers).values([
