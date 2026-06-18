@@ -12,6 +12,20 @@ import {
   json,
 } from "drizzle-orm/mysql-core";
 
+// ─── Roles (Funções) ───
+export const roles = mysqlTable("roles", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  canInsert: int("canInsert").default(1),
+  canUpdate: int("canUpdate").default(1),
+  canDelete: int("canDelete").default(0),
+  canPrint: int("canPrint").default(1),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Role = typeof roles.$inferSelect;
+
 // ─── Users (auth + app users) ───
 export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
@@ -19,6 +33,7 @@ export const users = mysqlTable("users", {
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 320 }),
   avatar: text("avatar"),
+  phone: varchar("phone", { length: 50 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   appRole: mysqlEnum("appRole", [
     "admin",
@@ -27,7 +42,7 @@ export const users = mysqlTable("users", {
     "operator",
     "viewer",
   ]).default("viewer"),
-  phone: varchar("phone", { length: 50 }),
+  roleId: bigint("roleId", { mode: "number", unsigned: true }),
   departmentId: bigint("departmentId", {
     mode: "number",
     unsigned: true,
@@ -51,6 +66,7 @@ export const departments = mysqlTable("departments", {
   budgetLimit: decimal("budgetLimit", { precision: 15, scale: 2 }).default(
     "0.00"
   ),
+  description: text("description"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -64,6 +80,7 @@ export const suppliers = mysqlTable("suppliers", {
   address: text("address"),
   phone: varchar("phone", { length: 50 }),
   email: varchar("email", { length: 320 }),
+  contactPerson: varchar("contactPerson", { length: 255 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
