@@ -82,7 +82,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6" style={{ maxWidth: "90%", margin: "0 auto" }}>
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white tracking-wide">
