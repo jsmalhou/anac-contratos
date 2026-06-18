@@ -196,6 +196,20 @@
     letter-spacing: 0.5px;
   }
 
+  .status-ativo,
+  .status-concluido,
+  .status-rescindido,
+  .status-em_renovacao,
+  .status-em_aditamento {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
   .status-ativo { background: rgba(74, 222, 128, 0.2); color: #4ADE80; border: 1px solid rgba(74,222,128,0.3); }
   .status-concluido { background: rgba(74, 222, 128, 0.2); color: #4ADE80; border: 1px solid rgba(74,222,128,0.3); }
   .status-rescindido { background: rgba(248, 113, 113, 0.2); color: #F87171; border: 1px solid rgba(248,113,113,0.3); }
