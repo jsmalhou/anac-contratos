@@ -10,6 +10,7 @@ import {
   alerts,
   auditLog,
   users,
+  roles,
 } from "@db/schema";
 import { eq, desc, like, and, lte, sql, count } from "drizzle-orm";
 
@@ -181,6 +182,13 @@ export const contractRouter = createRouter({
           .optional(),
         description: z.string().optional(),
         totalValue: z.string().optional(),
+        supplierId: z.number().optional(),
+        departmentId: z.number().optional(),
+        pcaId: z.number().optional(),
+        signingDate: z.string().optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        renewalDate: z.string().optional(),
         status: z
           .enum([
             "ativo",
@@ -190,14 +198,14 @@ export const contractRouter = createRouter({
             "em_aditamento",
           ])
           .optional(),
-        endDate: z.string().optional(),
-        renewalDate: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
       const { id, ...data } = input;
       const updateData: any = { ...data };
+      if (data.signingDate) updateData.signingDate = new Date(data.signingDate);
+      if (data.startDate) updateData.startDate = new Date(data.startDate);
       if (data.endDate) updateData.endDate = new Date(data.endDate);
       if (data.renewalDate) updateData.renewalDate = new Date(data.renewalDate);
       await db.update(contracts).set(updateData).where(eq(contracts.id, id));
@@ -422,6 +430,17 @@ export const supplierRouter = createRouter({
     return db.select().from(suppliers).orderBy(suppliers.name);
   }),
 
+  getById: publicQuery
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const [result] = await db
+        .select()
+        .from(suppliers)
+        .where(eq(suppliers.id, input.id));
+      return result || null;
+    }),
+
   create: publicQuery
     .input(
       z.object({
@@ -430,12 +449,40 @@ export const supplierRouter = createRouter({
         address: z.string().optional(),
         phone: z.string().optional(),
         email: z.string().optional(),
+        contactPerson: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
       const result = await db.insert(suppliers).values(input);
       return { id: result[0].insertId };
+    }),
+
+  update: publicQuery
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        nif: z.string().optional(),
+        address: z.string().optional(),
+        phone: z.string().optional(),
+        email: z.string().optional(),
+        contactPerson: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const { id, ...data } = input;
+      await db.update(suppliers).set(data).where(eq(suppliers.id, id));
+      return { success: true };
+    }),
+
+  delete: publicQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.delete(suppliers).where(eq(suppliers.id, input.id));
+      return { success: true };
     }),
 });
 
@@ -444,6 +491,99 @@ export const departmentRouter = createRouter({
     const db = getDb();
     return db.select().from(departments).orderBy(departments.name);
   }),
+
+  create: publicQuery
+    .input(
+      z.object({
+        name: z.string().min(1),
+        budgetLimit: z.string().optional(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const result = await db.insert(departments).values({
+        name: input.name,
+        budgetLimit: input.budgetLimit || "0.00",
+        description: input.description,
+      });
+      return { id: result[0].insertId };
+    }),
+
+  update: publicQuery
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        budgetLimit: z.string().optional(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const { id, ...data } = input;
+      await db.update(departments).set(data).where(eq(departments.id, id));
+      return { success: true };
+    }),
+
+  delete: publicQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.delete(departments).where(eq(departments.id, input.id));
+      return { success: true };
+    }),
+});
+
+export const roleRouter = createRouter({
+  list: publicQuery.query(async () => {
+    const db = getDb();
+    return db.select().from(roles).orderBy(roles.name);
+  }),
+
+  create: publicQuery
+    .input(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        canInsert: z.number().default(1),
+        canUpdate: z.number().default(1),
+        canDelete: z.number().default(0),
+        canPrint: z.number().default(1),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const result = await db.insert(roles).values(input);
+      return { id: result[0].insertId };
+    }),
+
+  update: publicQuery
+    .input(
+      z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        description: z.string().optional(),
+        canInsert: z.number().optional(),
+        canUpdate: z.number().optional(),
+        canDelete: z.number().optional(),
+        canPrint: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const { id, ...data } = input;
+      await db.update(roles).set(data).where(eq(roles.id, id));
+      return { success: true };
+    }),
+
+  delete: publicQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.delete(roles).where(eq(roles.id, input.id));
+      return { success: true };
+    }),
 });
 
 export const alertRouter = createRouter({
