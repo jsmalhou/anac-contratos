@@ -197,10 +197,10 @@
   }
 
   .status-ativo { background: rgba(74, 222, 128, 0.2); color: #4ADE80; border: 1px solid rgba(74,222,128,0.3); }
-  .status-concluido { background: rgba(96, 165, 250, 0.2); color: #60A5FA; border: 1px solid rgba(96,165,250,0.3); }
+  .status-concluido { background: rgba(74, 222, 128, 0.2); color: #4ADE80; border: 1px solid rgba(74,222,128,0.3); }
   .status-rescindido { background: rgba(248, 113, 113, 0.2); color: #F87171; border: 1px solid rgba(248,113,113,0.3); }
   .status-em_renovacao { background: rgba(251, 191, 36, 0.2); color: #FBBF24; border: 1px solid rgba(251,191,36,0.3); }
-  .status-em_aditamento { background: rgba(167, 139, 250, 0.2); color: #A78BFA; border: 1px solid rgba(167,139,250,0.3); }
+  .status-em_aditamento { background: rgba(156, 163, 175, 0.2); color: #9CA3AF; border: 1px solid rgba(156,163,175,0.3); }
 
   .kpi-card {
     background: linear-gradient(135deg, rgba(27,58,92,0.6) 0%, rgba(27,58,92,0.4) 100%);
