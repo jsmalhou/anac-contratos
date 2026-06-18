@@ -173,9 +173,12 @@ export default function Contracts() {
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
-                      <button className="p-1.5 rounded-lg text-white/40 hover:text-blue-400 hover:bg-white/5 transition-all">
+                      <Link
+                        to={`/contratos/${c.id}/editar`}
+                        className="p-1.5 rounded-lg text-white/40 hover:text-blue-400 hover:bg-white/5 transition-all"
+                      >
                         <Pencil className="w-4 h-4" />
-                      </button>
+                      </Link>
                       <button
                         onClick={() => {
                           if (
