@@ -5,6 +5,7 @@ import {
   supplierRouter,
   departmentRouter,
   alertRouter,
+  roleRouter,
 } from "./contract-router";
 import { createRouter, publicQuery } from "./middleware";
 
@@ -15,6 +16,7 @@ export const appRouter = createRouter({
   dashboard: dashboardRouter,
   supplier: supplierRouter,
   department: departmentRouter,
+  role: roleRouter,
   alert: alertRouter,
 });
 
