@@ -7,8 +7,13 @@ import Dashboard from "./pages/Dashboard";
 import Contracts from "./pages/Contracts";
 import ContractDetail from "./pages/ContractDetail";
 import NewContract from "./pages/NewContract";
+import EditContract from "./pages/EditContract";
 import Alerts from "./pages/Alerts";
 import Settings from "./pages/Settings";
+import Profile from "./pages/Profile";
+import Suppliers from "./pages/Suppliers";
+import Departments from "./pages/Departments";
+import Roles from "./pages/Roles";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return <Layout>{children}</Layout>;
@@ -44,8 +49,13 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/contratos" element={<Contracts />} />
         <Route path="/contratos/:id" element={<ContractDetail />} />
+        <Route path="/contratos/:id/editar" element={<EditContract />} />
         <Route path="/contratos/novo" element={<NewContract />} />
+        <Route path="/fornecedores" element={<Suppliers />} />
+        <Route path="/departamentos" element={<Departments />} />
+        <Route path="/funcoes" element={<Roles />} />
         <Route path="/alertas" element={<Alerts />} />
+        <Route path="/perfil" element={<Profile />} />
         <Route path="/configuracoes" element={<Settings />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
