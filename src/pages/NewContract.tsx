@@ -15,10 +15,7 @@ const typeOptions = [
 // Capitaliza primeira letra automaticamente
 function cap(val: string): string {
   if (!val) return val;
-  // Se for um unico caracter, maiuscula
-  if (val.length === 1) return val.toUpperCase();
-  // Capitaliza primeiro caracter e apos pontuacao
-  return val.replace(/(?:^|[.!?]\s+)([a-zàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ])/g, (m) => m.toUpperCase());
+  return val.charAt(0).toUpperCase() + val.slice(1);
 }
 
 export default function NewContract() {
