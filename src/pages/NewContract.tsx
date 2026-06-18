@@ -65,8 +65,25 @@ export default function NewContract() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Validacao frontend
+    if (!form.contractNumber.trim()) {
+      error("Número do contrato é obrigatório");
+      return;
+    }
+    if (!form.supplierId) {
+      error("Fornecedor é obrigatório");
+      return;
+    }
+    if (!form.pcaId) {
+      error("PCA Responsável é obrigatório");
+      return;
+    }
+    if (!form.departmentId) {
+      error("Departamento é obrigatório");
+      return;
+    }
     createMutation.mutate({
-      contractNumber: form.contractNumber,
+      contractNumber: form.contractNumber.trim(),
       contractType: form.contractType as "aquisicao" | "servicos" | "obras" | "locacao" | "outros",
       description: form.description,
       totalValue: form.totalValue,
@@ -78,6 +95,7 @@ export default function NewContract() {
       endDate: form.endDate,
       renewalDate: form.renewalDate || undefined,
       createdBy: 1,
+      contractFile: form.contractFile || undefined,
     });
   };
 
@@ -136,7 +154,7 @@ export default function NewContract() {
                 required
                 placeholder="CNT-2025-001"
                 value={form.contractNumber}
-                onChange={(e) => setForm({ ...form, contractNumber: cap(e.target.value) })}
+                onChange={(e) => setForm({ ...form, contractNumber: e.target.value })}
                 className={inputClass}
               />
             </div>
