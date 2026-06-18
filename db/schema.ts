@@ -122,6 +122,7 @@ export const contracts = mysqlTable("contracts", {
     mode: "number",
     unsigned: true,
   }).notNull(),
+  contractFile: varchar("contractFile", { length: 500 }),
   createdBy: bigint("createdBy", { mode: "number", unsigned: true }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
