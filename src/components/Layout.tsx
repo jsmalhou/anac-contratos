@@ -26,6 +26,7 @@ const mainNavItems = [
 const configNavItems = [
   { path: "/departamentos", label: "Departamentos", icon: Users },
   { path: "/funcoes", label: "Funções", icon: Shield },
+  { path: "/tipos-contrato", label: "Tipos de Contrato", icon: FileText },
   { path: "/configuracoes", label: "Configurações", icon: Settings },
 ];
 
