@@ -1,0 +1,13 @@
+name = "anac-contratos"
+main = "dist/boot.js"
+compatibility_date = "2025-06-19"
+
+# Assets (frontend)
+[site]
+bucket = "./dist/public"
+
+# Environment variables (add your DATABASE_URL in Cloudflare dashboard or via wrangler secret)
+# [vars]
+# DATABASE_URL = "your-mysql-connection-string"
+
+# Secrets (set via: wrangler secret put DATABASE_URL)
