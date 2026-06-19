@@ -168,7 +168,6 @@ export default function Settings() {
                 placeholder="+244-999-999-999"
                 onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                 className={inputClass}
-                placeholder="+244 9XX XXX XXX"
               />
             </div>
 
