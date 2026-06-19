@@ -8,6 +8,7 @@ import {
   roleRouter,
   contractTypeRouter,
 } from "./contract-router";
+import { alertGeneratorRouter } from "./alert-generator-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -20,6 +21,7 @@ export const appRouter = createRouter({
   role: roleRouter,
   alert: alertRouter,
   contractType: contractTypeRouter,
+  alertGenerator: alertGeneratorRouter,
 });
 
 export type AppRouter = typeof appRouter;
