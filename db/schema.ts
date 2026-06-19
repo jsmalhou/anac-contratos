@@ -102,13 +102,7 @@ export type Supplier = typeof suppliers.$inferSelect;
 export const contracts = mysqlTable("contracts", {
   id: serial("id").primaryKey(),
   contractNumber: varchar("contractNumber", { length: 100 }).notNull().unique(),
-  contractType: mysqlEnum("contractType", [
-    "aquisicao",
-    "servicos",
-    "obras",
-    "locacao",
-    "outros",
-  ]).notNull(),
+  contractType: varchar("contractType", { length: 100 }).notNull(),
   description: text("description"),
   totalValue: decimal("totalValue", { precision: 15, scale: 2 }).notNull(),
   paidValue: decimal("paidValue", { precision: 15, scale: 2 }).default("0.00"),
