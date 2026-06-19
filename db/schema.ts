@@ -26,6 +26,18 @@ export const roles = mysqlTable("roles", {
 
 export type Role = typeof roles.$inferSelect;
 
+// ─── Contract Types (Tipos de Contrato) ───
+export const contractTypes = mysqlTable("contractTypes", {
+  id: serial("id").primaryKey(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isActive: int("isActive").default(1),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ContractType = typeof contractTypes.$inferSelect;
+
 // ─── Users (auth + app users) ───
 export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
