@@ -18,6 +18,39 @@ const statusLabels: Record<string, string> = {
   em_aditamento: "Em Aditamento",
 };
 
+const statusColors: Record<string, { bg: string; color: string; border: string }> = {
+  ativo: { bg: "rgba(74, 222, 128, 0.2)", color: "#4ADE80", border: "rgba(74,222,128,0.3)" },
+  concluido: { bg: "rgba(74, 222, 128, 0.2)", color: "#4ADE80", border: "rgba(74,222,128,0.3)" },
+  rescindido: { bg: "rgba(248, 113, 113, 0.2)", color: "#F87171", border: "rgba(248,113,113,0.3)" },
+  em_renovacao: { bg: "rgba(251, 191, 36, 0.2)", color: "#FBBF24", border: "rgba(251,191,36,0.3)" },
+  em_aditamento: { bg: "rgba(156, 163, 175, 0.2)", color: "#9CA3AF", border: "rgba(156,163,175,0.3)" },
+};
+
+function StatusBadge({ status }: { status: string | null }) {
+  const s = status || "desconhecido";
+  const label = statusLabels[s] || s;
+  const colors = statusColors[s] || { bg: "rgba(156,163,175,0.2)", color: "#9CA3AF", border: "rgba(156,163,175,0.3)" };
+  
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 12px",
+        borderRadius: "20px",
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        background: colors.bg,
+        color: colors.color,
+        border: `1px solid ${colors.border}`,
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
 const typeLabels: Record<string, string> = {
   aquisicao: "Aquisição",
   servicos: "Serviços",
@@ -159,15 +192,7 @@ export default function Contracts() {
                       : "—"}
                   </td>
                   <td>
-                    {c.status && statusLabels[c.status] ? (
-                      <span className={`status-badge status-${c.status}`}>
-                        {statusLabels[c.status]}
-                      </span>
-                    ) : (
-                      <span className="status-badge status-default">
-                        {c.status || "Desconhecido"}
-                      </span>
-                    )}
+                    <StatusBadge status={c.status} />
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
