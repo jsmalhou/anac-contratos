@@ -11,6 +11,7 @@ import {
   auditLog,
   users,
   roles,
+  contractTypes,
 } from "@db/schema";
 import { eq, desc, like, and, lte, sql, count } from "drizzle-orm";
 
@@ -615,6 +616,56 @@ export const alertRouter = createRouter({
         .update(alerts)
         .set({ status: "lido" })
         .where(eq(alerts.id, input.id));
+      return { success: true };
+    }),
+});
+
+export const contractTypeRouter = createRouter({
+  list: publicQuery.query(async () => {
+    const db = getDb();
+    return db.select().from(contractTypes).where(eq(contractTypes.isActive, 1)).orderBy(contractTypes.name);
+  }),
+
+  create: publicQuery
+    .input(
+      z.object({
+        code: z.string().min(1),
+        name: z.string().min(1),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const result = await db.insert(contractTypes).values({
+        code: input.code.toUpperCase(),
+        name: input.name,
+        description: input.description,
+      });
+      return { id: result[0].insertId };
+    }),
+
+  update: publicQuery
+    .input(
+      z.object({
+        id: z.number(),
+        code: z.string().min(1).optional(),
+        name: z.string().min(1).optional(),
+        description: z.string().optional(),
+        isActive: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const { id, ...data } = input;
+      await db.update(contractTypes).set(data).where(eq(contractTypes.id, id));
+      return { success: true };
+    }),
+
+  delete: publicQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.update(contractTypes).set({ isActive: 0 }).where(eq(contractTypes.id, input.id));
       return { success: true };
     }),
 });
