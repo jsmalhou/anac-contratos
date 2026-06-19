@@ -1,7 +1,7 @@
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { contracts, alerts } from "@db/schema";
-import { eq, and, lte } from "drizzle-orm";
+import { eq, and, lte, desc } from "drizzle-orm";
 import { generateAlerts } from "./alert-generator";
 
 export const alertDebugRouter = createRouter({
