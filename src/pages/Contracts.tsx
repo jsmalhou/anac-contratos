@@ -159,11 +159,15 @@ export default function Contracts() {
                       : "—"}
                   </td>
                   <td>
-                    <span
-                      className={`status-badge status-${c.status || "ativo"}`}
-                    >
-                      {statusLabels[c.status || "ativo"] || c.status}
-                    </span>
+                    {c.status && statusLabels[c.status] ? (
+                      <span className={`status-badge status-${c.status}`}>
+                        {statusLabels[c.status]}
+                      </span>
+                    ) : (
+                      <span className="status-badge status-default">
+                        {c.status || "Desconhecido"}
+                      </span>
+                    )}
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
