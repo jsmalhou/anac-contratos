@@ -36,12 +36,10 @@ export default function Dashboard() {
     if (v == null) return "Kz 0,00";
     const n = typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : 0;
     if (isNaN(n)) return "Kz 0,00";
-    // Formato: Kz 2.500.638.000.000,00
-    const formatted = new Intl.NumberFormat("pt-PT", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(n);
-    return `Kz ${formatted}`;
+    // Formato manual: Kz 2.500.638.000.000,00
+    const [intPart, decPart] = n.toFixed(2).split(".");
+    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `Kz ${intFormatted},${decPart}`;
   };
 
   return (
