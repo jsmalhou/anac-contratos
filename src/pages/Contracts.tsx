@@ -75,15 +75,12 @@ export default function Contracts() {
   });
 
   const formatKz = (v: string | number | null) => {
-    if (v == null) return "Kz 0";
+    if (v == null) return "Kz 0,00";
     const n = typeof v === "string" ? parseFloat(v) : v;
-    return new Intl.NumberFormat("pt-PT", {
-      style: "currency",
-      currency: "AOA",
-      minimumFractionDigits: 0,
-    })
-      .format(n)
-      .replace("AOA", "Kz");
+    if (isNaN(n)) return "Kz 0,00";
+    const [intPart, decPart] = n.toFixed(2).split(".");
+    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `Kz ${intFormatted},${decPart}`;
   };
 
   return (
