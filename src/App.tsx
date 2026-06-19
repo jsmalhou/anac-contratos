@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Suppliers from "./pages/Suppliers";
 import Departments from "./pages/Departments";
 import Roles from "./pages/Roles";
+import ContractTypes from "./pages/ContractTypes";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return <Layout>{children}</Layout>;
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="/fornecedores" element={<Suppliers />} />
         <Route path="/departamentos" element={<Departments />} />
         <Route path="/funcoes" element={<Roles />} />
+        <Route path="/tipos-contrato" element={<ContractTypes />} />
         <Route path="/alertas" element={<Alerts />} />
         <Route path="/perfil" element={<Profile />} />
         <Route path="/configuracoes" element={<Settings />} />
