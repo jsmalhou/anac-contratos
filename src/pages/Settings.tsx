@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDemoAuth } from "@/hooks/useDemoAuth";
 import { useSweetAlert } from "@/hooks/useSweetAlert";
+import { formatPhone } from "@/hooks/useFormat";
 import { trpc } from "@/providers/trpc";
 import {
   Shield,
@@ -164,7 +165,8 @@ export default function Settings() {
               <input
                 type="tel"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="+244-999-999-999"
+                onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                 className={inputClass}
                 placeholder="+244 9XX XXX XXX"
               />
