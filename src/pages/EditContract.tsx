@@ -13,14 +13,6 @@ const statusOptions = [
   { value: "em_aditamento", label: "Em Aditamento" },
 ];
 
-const statusOptions = [
-  { value: "ativo", label: "Ativo" },
-  { value: "concluido", label: "Concluído" },
-  { value: "rescindido", label: "Rescindido" },
-  { value: "em_renovacao", label: "Em Renovação" },
-  { value: "em_aditamento", label: "Em Aditamento" },
-];
-
 export default function EditContract() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
