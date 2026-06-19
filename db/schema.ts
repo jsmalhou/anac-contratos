@@ -71,6 +71,37 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
+// ─── App Users (Utilizadores da aplicação - CRUD) ───
+export const appUsers = mysqlTable("appUsers", {
+  id: serial("id").primaryKey(),
+  fullName: varchar("fullName", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  avatar: text("avatar"),
+  password: varchar("password", { length: 255 }),
+  appRole: mysqlEnum("appRole", [
+    "admin",
+    "pca",
+    "gestor",
+    "financeiro",
+    "operador",
+    "visualizador",
+  ]).default("visualizador").notNull(),
+  roleId: bigint("roleId", { mode: "number", unsigned: true }),
+  departmentId: bigint("departmentId", {
+    mode: "number",
+    unsigned: true,
+  }),
+  isActive: int("isActive").default(1),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
+});
+
+export type AppUser = typeof appUsers.$inferSelect;
+
 // ─── Departments ───
 export const departments = mysqlTable("departments", {
   id: serial("id").primaryKey(),
@@ -123,12 +154,12 @@ export const contracts = mysqlTable("contracts", {
   ])
     .default("ativo")
     .notNull(),
+  contractFile: varchar("contractFile", { length: 500 }),
   pcaId: bigint("pcaId", { mode: "number", unsigned: true }).notNull(),
   departmentId: bigint("departmentId", {
     mode: "number",
     unsigned: true,
   }).notNull(),
-  contractFile: varchar("contractFile", { length: 500 }),
   createdBy: bigint("createdBy", { mode: "number", unsigned: true }).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt")
@@ -202,7 +233,7 @@ export const alerts = mysqlTable("alerts", {
 export type Alert = typeof alerts.$inferSelect;
 
 // ─── Audit Log ───
-export const auditLog = mysqlTable("auditlog", {
+export const auditLog = mysqlTable("auditLog", {
   id: serial("id").primaryKey(),
   userId: bigint("userId", { mode: "number", unsigned: true }),
   action: mysqlEnum("action", [

@@ -24,6 +24,7 @@ const mainNavItems = [
 ];
 
 const configNavItems = [
+  { path: "/utilizadores", label: "Utilizadores", icon: UserCircle },
   { path: "/departamentos", label: "Departamentos", icon: Users },
   { path: "/funcoes", label: "Funções", icon: Shield },
   { path: "/tipos-contrato", label: "Tipos de Contrato", icon: FileText },

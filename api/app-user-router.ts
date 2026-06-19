@@ -1,0 +1,97 @@
+import { z } from "zod";
+import { createRouter, publicQuery } from "./middleware";
+import { getDb } from "./queries/connection";
+import { appUsers } from "@db/schema";
+import { eq, desc } from "drizzle-orm";
+
+export const appUserRouter = createRouter({
+  list: publicQuery.query(async () => {
+    const db = getDb();
+    return db
+      .select()
+      .from(appUsers)
+      .orderBy(desc(appUsers.createdAt));
+  }),
+
+  getById: publicQuery
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const [user] = await db
+        .select()
+        .from(appUsers)
+        .where(eq(appUsers.id, input.id));
+      return user || null;
+    }),
+
+  create: publicQuery
+    .input(
+      z.object({
+        fullName: z.string().min(1),
+        email: z.string().email(),
+        phone: z.string().optional(),
+        appRole: z.enum([
+          "admin",
+          "pca",
+          "gestor",
+          "financeiro",
+          "operador",
+          "visualizador",
+        ]),
+        roleId: z.number().optional(),
+        departmentId: z.number().optional(),
+        password: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const result = await db.insert(appUsers).values({
+        fullName: input.fullName,
+        email: input.email,
+        phone: input.phone,
+        appRole: input.appRole,
+        roleId: input.roleId || null,
+        departmentId: input.departmentId || null,
+        password: input.password || null,
+      } as any);
+      return { id: result[0].insertId };
+    }),
+
+  update: publicQuery
+    .input(
+      z.object({
+        id: z.number(),
+        fullName: z.string().min(1).optional(),
+        email: z.string().email().optional(),
+        phone: z.string().optional(),
+        appRole: z.enum([
+          "admin",
+          "pca",
+          "gestor",
+          "financeiro",
+          "operador",
+          "visualizador",
+        ]).optional(),
+        roleId: z.number().optional(),
+        departmentId: z.number().optional(),
+        isActive: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const { id, ...data } = input;
+      await db.update(appUsers).set(data).where(eq(appUsers.id, id));
+      return { success: true };
+    }),
+
+  delete: publicQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db
+        .update(appUsers)
+        .set({ isActive: 0 })
+        .where(eq(appUsers.id, input.id));
+      return { success: true };
+    }),
+});

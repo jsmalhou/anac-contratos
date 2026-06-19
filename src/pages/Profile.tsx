@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDemoAuth } from "@/hooks/useDemoAuth";
 import { useSweetAlert } from "@/hooks/useSweetAlert";
+import { formatPhone } from "@/hooks/useFormat";
 import {
   User,
   Phone,
@@ -10,28 +11,70 @@ import {
   Save,
   Check,
   X,
+  Mail,
 } from "lucide-react";
+
+const roleLabels: Record<string, string> = {
+  admin: "Administrador",
+  pca: "PCA",
+  gestor: "Gestor de Contratos",
+  financeiro: "Financeiro",
+  operador: "Operador",
+  visualizador: "Visualizador",
+};
+
+const STORAGE_KEY = "anac_demo_profile";
 
 export default function Profile() {
   const { user } = useDemoAuth();
   const { success } = useSweetAlert();
 
   const [form, setForm] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    department: "Direção Geral",
-    role: user?.appRole || "admin",
-    avatar: user?.avatar || "",
+    name: "",
+    email: "",
+    phone: "",
+    department: "Direcção Geral",
+    role: "admin",
+    avatar: "",
     canInsert: true,
     canUpdate: true,
     canDelete: true,
     canPrint: true,
   });
 
+  // Load profile data on mount - prioritize logged-in user email
+  useEffect(() => {
+    if (!user) return;
+
+    const stored = localStorage.getItem(STORAGE_KEY);
+    let profileData = null;
+
+    if (stored) {
+      try {
+        profileData = JSON.parse(stored);
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    // Always use the logged-in user's email to ensure consistency
+    setForm({
+      name: profileData?.name || user.name || "",
+      email: user.email || profileData?.email || "",
+      phone: profileData?.phone || "",
+      department: profileData?.department || "Direcção Geral",
+      role: user.appRole || profileData?.role || "admin",
+      avatar: profileData?.avatar || "",
+      canInsert: profileData?.canInsert ?? true,
+      canUpdate: profileData?.canUpdate ?? true,
+      canDelete: profileData?.canDelete ?? true,
+      canPrint: profileData?.canPrint ?? true,
+    });
+  }, [user]);
+
   const handleSave = () => {
-    localStorage.setItem("anac_demo_profile", JSON.stringify(form));
-    success("Perfil atualizado com sucesso!");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(form));
+    success("Perfil actualizado com sucesso!");
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,14 +88,6 @@ export default function Profile() {
     }
   };
 
-  const roleLabels: Record<string, string> = {
-    admin: "Administrador",
-    pca: "PCA",
-    finance_manager: "Gestor Financeiro",
-    operator: "Operador",
-    viewer: "Visualizador",
-  };
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -61,7 +96,7 @@ export default function Profile() {
           PERFIL DO UTILIZADOR
         </h1>
         <p className="text-white/50 text-sm mt-1">
-          Gerir informações pessoais e permissões
+          Gerir informacoes pessoais e permissoes
         </p>
       </div>
 
@@ -97,7 +132,10 @@ export default function Profile() {
           </div>
 
           <p className="text-white font-medium">{form.name}</p>
-          <p className="text-white/50 text-sm">{form.email}</p>
+          <p className="text-white/50 text-sm flex items-center justify-center gap-1 mt-1">
+            <Mail className="w-3 h-3" />
+            {form.email}
+          </p>
           <span className="status-badge status-ativo mt-2 inline-block text-xs">
             {roleLabels[form.role] || form.role}
           </span>
@@ -107,7 +145,7 @@ export default function Profile() {
         <div className="lg:col-span-2 glass-card p-6 space-y-5">
           <h3 className="text-white font-semibold flex items-center gap-2">
             <User className="w-5 h-5 text-amber-400" />
-            Informações Pessoais
+            Informacoes Pessoais
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -124,7 +162,8 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5">
+              <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <Mail className="w-3 h-3" />
                 Email
               </label>
               <input
@@ -133,18 +172,23 @@ export default function Profile() {
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="glass-input w-full px-4 py-2.5 text-sm"
               />
+              <p className="text-white/30 text-[10px] mt-1">
+                Este email esta sincronizado com a conta de utilizador
+              </p>
             </div>
 
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1">
                 <Phone className="w-3 h-3" />
-                Nº de Telemóvel
+                N de Telemovel
               </label>
               <input
                 type="tel"
-                placeholder="+244 9XX XXX XXX"
+                placeholder="+244-999-999-999"
                 value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, phone: formatPhone(e.target.value) })
+                }
                 className="glass-input w-full px-4 py-2.5 text-sm"
               />
             </div>
@@ -167,7 +211,7 @@ export default function Profile() {
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1">
                 <Shield className="w-3 h-3" />
-                Função
+                Perfil de Acesso
               </label>
               <select
                 value={form.role}
@@ -189,15 +233,15 @@ export default function Profile() {
       <div className="glass-card p-6">
         <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
           <Shield className="w-5 h-5 text-amber-400" />
-          Permissões de Acesso
+          Permissoes de Acesso
         </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { key: "canInsert", label: "Inserir", icon: Plus },
-            { key: "canUpdate", label: "Modificar", icon: Pencil },
-            { key: "canDelete", label: "Apagar", icon: Trash },
-            { key: "canPrint", label: "Imprimir", icon: Printer },
+            { key: "canInsert", label: "Inserir", icon: PlusIcon },
+            { key: "canUpdate", label: "Modificar", icon: PencilIcon },
+            { key: "canDelete", label: "Apagar", icon: TrashIcon },
+            { key: "canPrint", label: "Imprimir", icon: PrinterIcon },
           ].map((perm) => {
             const Icon = perm.icon;
             const active = form[perm.key as keyof typeof form] as boolean;
@@ -230,7 +274,7 @@ export default function Profile() {
       <div className="flex justify-end">
         <button onClick={handleSave} className="btn-3d px-6 py-2.5 text-sm flex items-center gap-2">
           <Save className="w-4 h-4" />
-          Guardar Alterações
+          Guardar Alteracoes
         </button>
       </div>
     </div>
@@ -238,28 +282,28 @@ export default function Profile() {
 }
 
 // Icon components for permissions
-function Plus({ className }: { className?: string }) {
+function PlusIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
     </svg>
   );
 }
-function Pencil({ className }: { className?: string }) {
+function PencilIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
     </svg>
   );
 }
-function Trash({ className }: { className?: string }) {
+function TrashIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
     </svg>
   );
 }
-function Printer({ className }: { className?: string }) {
+function PrinterIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" /><rect x="6" y="14" width="12" height="8" />

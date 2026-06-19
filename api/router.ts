@@ -10,6 +10,7 @@ import {
 } from "./contract-router";
 import { alertGeneratorRouter } from "./alert-generator-router";
 import { alertDebugRouter } from "./alert-debug-router";
+import { appUserRouter } from "./app-user-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -24,6 +25,7 @@ export const appRouter = createRouter({
   contractType: contractTypeRouter,
   alertGenerator: alertGeneratorRouter,
   alertDebug: alertDebugRouter,
+  appUser: appUserRouter,
 });
 
 export type AppRouter = typeof appRouter;
