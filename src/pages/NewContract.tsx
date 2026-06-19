@@ -115,7 +115,7 @@ export default function NewContract() {
               <select required value={form.contractType} onChange={(e) => setForm({ ...form, contractType: e.target.value })} className={inputClass}>
                 <option value="">Selecionar tipo...</option>
                 {contractTypeList?.map((t) => (
-                  <option key={t.id} value={t.code.toLowerCase()}>{t.name}</option>
+                  <option key={t.id} value={t.code}>{t.name}</option>
                 ))}
                 {!contractTypeList?.length && (
                   <>
