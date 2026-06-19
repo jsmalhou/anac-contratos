@@ -6,6 +6,7 @@ import {
   departmentRouter,
   alertRouter,
   roleRouter,
+  contractTypeRouter,
 } from "./contract-router";
 import { createRouter, publicQuery } from "./middleware";
 
@@ -18,6 +19,7 @@ export const appRouter = createRouter({
   department: departmentRouter,
   role: roleRouter,
   alert: alertRouter,
+  contractType: contractTypeRouter,
 });
 
 export type AppRouter = typeof appRouter;
