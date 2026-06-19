@@ -1,4 +1,5 @@
 import { trpc } from "@/providers/trpc";
+import GaugeChart from "@/components/GaugeChart";
 import {
   FileText,
   TrendingUp,
@@ -148,26 +149,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* By Status */}
+        {/* By Status - Gauge Chart */}
         <div className="glass-card p-5">
           <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
             <Clock className="w-5 h-5 text-amber-400" />
-            Por Estado
+            Taxa de Ativos
           </h3>
-          <div className="space-y-3">
-            {charts?.byStatus.map((item) => (
-              <div key={item.status} className="flex items-center justify-between">
-                <span className="text-white/70 text-sm">
-                  {statusLabels[item.status] || item.status}
-                </span>
-                <span
-                  className={`status-badge status-${item.status}`}
-                >
-                  {item.count}
-                </span>
-              </div>
-            ))}
-          </div>
+          <GaugeChart
+            active={kpis?.activeContracts ?? 0}
+            inactive={(kpis?.totalContracts ?? 0) - (kpis?.activeContracts ?? 0)}
+            label="Contratos Ativos"
+          />
         </div>
 
         {/* Pending Value */}
