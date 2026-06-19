@@ -2,21 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useSweetAlert } from "@/hooks/useSweetAlert";
+import { formatKzInput, parseKzValue, formatPhone } from "@/hooks/useFormat";
 import { ArrowLeft, Save, FileText, Upload, X } from "lucide-react";
-
-const typeOptions = [
-  { value: "aquisicao", label: "Aquisição de Bens" },
-  { value: "servicos", label: "Prestação de Serviços" },
-  { value: "obras", label: "Obras Públicas" },
-  { value: "locacao", label: "Locação" },
-  { value: "outros", label: "Outros" },
-];
-
-// Capitaliza primeira letra automaticamente
-function cap(val: string): string {
-  if (!val) return val;
-  return val.charAt(0).toUpperCase() + val.slice(1);
-}
 
 export default function NewContract() {
   const navigate = useNavigate();
@@ -24,13 +11,14 @@ export default function NewContract() {
   const { data: suppliers } = trpc.supplier.list.useQuery();
   const { data: departments } = trpc.department.list.useQuery();
   const { data: usersList } = trpc.auth.usersList.useQuery();
+  const { data: contractTypeList } = trpc.contractType.list.useQuery();
 
   const [activeTab, setActiveTab] = useState<"dados" | "documentos">("dados");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [form, setForm] = useState({
     contractNumber: "",
-    contractType: "aquisicao",
+    contractType: "",
     description: "",
     totalValue: "",
     supplierId: "",
@@ -65,28 +53,19 @@ export default function NewContract() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Validacao frontend
-    if (!form.contractNumber.trim()) {
-      error("Número do contrato é obrigatório");
-      return;
-    }
-    if (!form.supplierId) {
-      error("Fornecedor é obrigatório");
-      return;
-    }
-    if (!form.pcaId) {
-      error("PCA Responsável é obrigatório");
-      return;
-    }
-    if (!form.departmentId) {
-      error("Departamento é obrigatório");
-      return;
-    }
+    if (!form.contractNumber.trim()) { error("Número do contrato é obrigatório"); return; }
+    if (!form.contractType) { error("Tipo de contrato é obrigatório"); return; }
+    if (!form.supplierId) { error("Fornecedor é obrigatório"); return; }
+    if (!form.pcaId) { error("PCA Responsável é obrigatório"); return; }
+    if (!form.departmentId) { error("Departamento é obrigatório"); return; }
+    
+    const numericValue = parseKzValue(form.totalValue);
+    
     createMutation.mutate({
       contractNumber: form.contractNumber.trim(),
       contractType: form.contractType as "aquisicao" | "servicos" | "obras" | "locacao" | "outros",
       description: form.description,
-      totalValue: form.totalValue,
+      totalValue: numericValue || "0",
       supplierId: Number(form.supplierId),
       pcaId: Number(form.pcaId),
       departmentId: Number(form.departmentId),
@@ -104,7 +83,6 @@ export default function NewContract() {
 
   return (
     <div className="space-y-6" style={{ maxWidth: "90%", margin: "0 auto" }}>
-      {/* Header */}
       <div className="flex items-center gap-4">
         <Link to="/contratos" className="p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all">
           <ArrowLeft className="w-5 h-5" />
@@ -115,108 +93,67 @@ export default function NewContract() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-2 border-b border-white/10 pb-0">
-        <button
-          onClick={() => setActiveTab("dados")}
-          className={`px-5 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-2 ${
-            activeTab === "dados"
-              ? "bg-white/10 text-amber-400 border-t border-x border-white/10"
-              : "text-white/50 hover:text-white hover:bg-white/5"
-          }`}
-        >
-          <FileText className="w-4 h-4" />
-          Dados do Contrato
+        <button onClick={() => setActiveTab("dados")} className={`px-5 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-2 ${activeTab === "dados" ? "bg-white/10 text-amber-400 border-t border-x border-white/10" : "text-white/50 hover:text-white hover:bg-white/5"}`}>
+          <FileText className="w-4 h-4" /> Dados do Contrato
         </button>
-        <button
-          onClick={() => setActiveTab("documentos")}
-          className={`px-5 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-2 ${
-            activeTab === "documentos"
-              ? "bg-white/10 text-amber-400 border-t border-x border-white/10"
-              : "text-white/50 hover:text-white hover:bg-white/5"
-          }`}
-        >
-          <Upload className="w-4 h-4" />
-          Documentos
-          {uploadedFile && <span className="w-2 h-2 bg-emerald-400 rounded-full" />}
+        <button onClick={() => setActiveTab("documentos")} className={`px-5 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-2 ${activeTab === "documentos" ? "bg-white/10 text-amber-400 border-t border-x border-white/10" : "text-white/50 hover:text-white hover:bg-white/5"}`}>
+          <Upload className="w-4 h-4" /> Documentos {uploadedFile && <span className="w-2 h-2 bg-emerald-400 rounded-full" />}
         </button>
       </div>
 
       <form onSubmit={handleSubmit} className="glass-card p-6 space-y-5">
-        {/* TAB: Dados */}
         {activeTab === "dados" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Contract Number - com capitalizacao */}
             <div>
               <label className={labelClass}>Número do Contrato *</label>
-              <input
-                type="text"
-                required
-                placeholder="CNT-2025-001"
-                value={form.contractNumber}
-                onChange={(e) => setForm({ ...form, contractNumber: e.target.value })}
-                className={inputClass}
-              />
+              <input type="text" required placeholder="CNT-2025-001" value={form.contractNumber} onChange={(e) => setForm({ ...form, contractNumber: e.target.value })} className={inputClass} />
             </div>
 
-            {/* Type */}
             <div>
               <label className={labelClass}>Tipo de Contrato *</label>
-              <select
-                value={form.contractType}
-                onChange={(e) => setForm({ ...form, contractType: e.target.value })}
-                className={inputClass}
-              >
-                {typeOptions.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
+              <select required value={form.contractType} onChange={(e) => setForm({ ...form, contractType: e.target.value })} className={inputClass}>
+                <option value="">Selecionar tipo...</option>
+                {contractTypeList?.map((t) => (
+                  <option key={t.id} value={t.code.toLowerCase()}>{t.name}</option>
                 ))}
+                {!contractTypeList?.length && (
+                  <>
+                    <option value="aquisicao">Aquisição de Bens</option>
+                    <option value="servicos">Prestação de Serviços</option>
+                    <option value="obras">Obras Públicas</option>
+                    <option value="locacao">Locação</option>
+                    <option value="outros">Outros</option>
+                  </>
+                )}
               </select>
             </div>
 
-            {/* Description - com capitalizacao */}
             <div className="md:col-span-2">
               <label className={labelClass}>Objeto do Contrato *</label>
-              <textarea
-                required
-                rows={3}
-                placeholder="Descrição detalhada do objeto do contrato..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: cap(e.target.value) })}
-                className={inputClass}
-              />
+              <textarea required rows={3} placeholder="Descrição detalhada do objeto do contrato..." value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
             </div>
 
-            {/* Total Value */}
             <div>
               <label className={labelClass}>Valor Total (Kz) *</label>
               <input
-                type="number"
-                step="0.01"
+                type="text"
                 required
-                placeholder="0.00"
+                placeholder="0,00"
                 value={form.totalValue}
-                onChange={(e) => setForm({ ...form, totalValue: e.target.value })}
+                onChange={(e) => setForm({ ...form, totalValue: formatKzInput(e.target.value) })}
                 className={inputClass}
               />
             </div>
 
-            {/* Supplier */}
             <div>
               <label className={labelClass}>Fornecedor *</label>
-              <select
-                required
-                value={form.supplierId}
-                onChange={(e) => setForm({ ...form, supplierId: e.target.value })}
-                className={inputClass}
-              >
+              <select required value={form.supplierId} onChange={(e) => setForm({ ...form, supplierId: e.target.value })} className={inputClass}>
                 <option value="">Selecionar...</option>
-                {suppliers?.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
+                {suppliers?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
 
-            {/* Dates */}
             <div>
               <label className={labelClass}>Data de Assinatura *</label>
               <input type="date" required value={form.signingDate} onChange={(e) => setForm({ ...form, signingDate: e.target.value })} className={inputClass} />
@@ -234,7 +171,6 @@ export default function NewContract() {
               <input type="date" value={form.renewalDate} onChange={(e) => setForm({ ...form, renewalDate: e.target.value })} className={inputClass} />
             </div>
 
-            {/* PCA */}
             <div>
               <label className={labelClass}>PCA Responsável *</label>
               <select required value={form.pcaId} onChange={(e) => setForm({ ...form, pcaId: e.target.value })} className={inputClass}>
@@ -243,7 +179,6 @@ export default function NewContract() {
               </select>
             </div>
 
-            {/* Department */}
             <div>
               <label className={labelClass}>Departamento *</label>
               <select required value={form.departmentId} onChange={(e) => setForm({ ...form, departmentId: e.target.value })} className={inputClass}>
@@ -254,7 +189,6 @@ export default function NewContract() {
           </div>
         )}
 
-        {/* TAB: Documentos */}
         {activeTab === "documentos" && (
           <div className="space-y-6">
             <div>
@@ -262,9 +196,7 @@ export default function NewContract() {
                 <Upload className="w-5 h-5 text-amber-400" />
                 Upload do Contrato (PDF)
               </h3>
-              <p className="text-white/50 text-sm mb-4">
-                Anexe o contrato assinado em formato PDF
-              </p>
+              <p className="text-white/50 text-sm mb-4">Anexe o contrato assinado em formato PDF</p>
             </div>
 
             {!uploadedFile ? (
@@ -283,17 +215,12 @@ export default function NewContract() {
                   <p className="text-white font-medium text-sm">{uploadedFile.name}</p>
                   <p className="text-white/40 text-xs">{(uploadedFile.size / 1024 / 1024).toFixed(2)} MB</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={removeFile}
-                  className="p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all"
-                >
+                <button type="button" onClick={removeFile} className="p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-400/10 transition-all">
                   <X className="w-5 h-5" />
                 </button>
               </div>
             )}
 
-            {/* File name display */}
             {form.contractFile && (
               <div className="glass-card p-4">
                 <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Ficheiro Anexado</p>
@@ -303,7 +230,6 @@ export default function NewContract() {
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex items-center gap-3 pt-4 border-t border-white/10">
           <button type="submit" disabled={createMutation.isPending} className="btn-3d px-6 py-2.5 text-sm flex items-center gap-2">
             <Save className="w-4 h-4" />
