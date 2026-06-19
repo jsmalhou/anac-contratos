@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { trpc } from "@/providers/trpc";
 import { useSweetAlert } from "@/hooks/useSweetAlert";
+import { formatPhone } from "@/hooks/useFormat";
 import {
   Building2,
   Plus,
@@ -149,7 +150,7 @@ export default function Suppliers() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5">Nome *</label>
-              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="glass-input w-full px-4 py-2.5 text-sm" />
+              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value.toUpperCase() })} className="glass-input w-full px-4 py-2.5 text-sm" />
             </div>
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5">NIF</label>
@@ -157,7 +158,7 @@ export default function Suppliers() {
             </div>
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1"><Phone className="w-3 h-3" />Telefone</label>
-              <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="glass-input w-full px-4 py-2.5 text-sm" />
+              <input value={form.phone} placeholder="+244-999-999-999" onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} className="glass-input w-full px-4 py-2.5 text-sm" />
             </div>
             <div>
               <label className="block text-white/60 text-xs uppercase tracking-wider mb-1.5 flex items-center gap-1"><Mail className="w-3 h-3" />Email</label>
