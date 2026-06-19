@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { useSweetAlert } from "@/hooks/useSweetAlert";
+import { formatKzInput, parseKzValue } from "@/hooks/useFormat";
 import { ArrowLeft, Save } from "lucide-react";
 
-const typeOptions = [
-  { value: "aquisicao", label: "Aquisição de Bens" },
-  { value: "servicos", label: "Prestação de Serviços" },
-  { value: "obras", label: "Obras Públicas" },
-  { value: "locacao", label: "Locação" },
-  { value: "outros", label: "Outros" },
+const statusOptions = [
+  { value: "ativo", label: "Ativo" },
+  { value: "concluido", label: "Concluído" },
+  { value: "rescindido", label: "Rescindido" },
+  { value: "em_renovacao", label: "Em Renovação" },
+  { value: "em_aditamento", label: "Em Aditamento" },
 ];
 
 const statusOptions = [
@@ -32,6 +33,7 @@ export default function EditContract() {
   const { data: suppliers } = trpc.supplier.list.useQuery();
   const { data: departments } = trpc.department.list.useQuery();
   const { data: usersList } = trpc.auth.usersList.useQuery();
+  const { data: contractTypeList } = trpc.contractType.list.useQuery();
 
   const updateMutation = trpc.contract.update.useMutation({
     onSuccess: () => {
@@ -62,7 +64,7 @@ export default function EditContract() {
         contractNumber: contract.contractNumber,
         contractType: contract.contractType,
         description: contract.description || "",
-        totalValue: String(contract.totalValue),
+        totalValue: formatKzInput(String(contract.totalValue)),
         supplierId: String(contract.supplierId),
         departmentId: String(contract.departmentId),
         pcaId: String(contract.pcaId),
@@ -88,7 +90,7 @@ export default function EditContract() {
       contractNumber: form.contractNumber,
       contractType: form.contractType as any,
       description: form.description,
-      totalValue: form.totalValue,
+      totalValue: parseKzValue(form.totalValue),
       supplierId: Number(form.supplierId),
       departmentId: Number(form.departmentId),
       pcaId: Number(form.pcaId),
@@ -133,7 +135,18 @@ export default function EditContract() {
           <div>
             <label className={labelClass}>Tipo de Contrato *</label>
             <select value={form.contractType} onChange={(e) => setForm({ ...form, contractType: e.target.value })} className={inputClass}>
-              {typeOptions.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+              {contractTypeList?.map((t) => (
+                <option key={t.id} value={t.code.toLowerCase()}>{t.name}</option>
+              ))}
+              {!contractTypeList?.length && (
+                <>
+                  <option value="aquisicao">Aquisição de Bens</option>
+                  <option value="servicos">Prestação de Serviços</option>
+                  <option value="obras">Obras Públicas</option>
+                  <option value="locacao">Locação</option>
+                  <option value="outros">Outros</option>
+                </>
+              )}
             </select>
           </div>
 
@@ -144,7 +157,7 @@ export default function EditContract() {
 
           <div>
             <label className={labelClass}>Valor Total (Kz) *</label>
-            <input type="number" step="0.01" required value={form.totalValue} onChange={(e) => setForm({ ...form, totalValue: e.target.value })} className={inputClass} />
+            <input type="text" required value={form.totalValue} onChange={(e) => setForm({ ...form, totalValue: formatKzInput(e.target.value) })} className={inputClass} />
           </div>
 
           <div>
@@ -201,9 +214,4 @@ export default function EditContract() {
             <Save className="w-4 h-4" />
             {updateMutation.isPending ? "A guardar..." : "Guardar Alterações"}
           </button>
-          <Link to={`/contratos/${id}`} className="btn-3d-secondary px-6 py-2.5 text-sm">Cancelar</Link>
-        </div>
-      </form>
-    </div>
-  );
-}
+          <Link to={`/contratos/${id}`} className="btn-3d-secondary px-6 py-2.5 
