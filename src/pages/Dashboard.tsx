@@ -33,16 +33,15 @@ export default function Dashboard() {
   const { data: expiring } = trpc.dashboard.expiringContracts.useQuery();
 
   const formatKz = (v: string | number | null | undefined) => {
-    if (v == null) return "Kz 0";
+    if (v == null) return "0 Kz";
     const n = typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : 0;
-    if (isNaN(n)) return "Kz 0";
-    return new Intl.NumberFormat("pt-PT", {
-      style: "currency",
-      currency: "AOA",
+    if (isNaN(n)) return "0 Kz";
+    // Formato: 2 500 638 000 000 Kz (separador de milhares = espaço)
+    const formatted = new Intl.NumberFormat("fr-FR", {
       minimumFractionDigits: 0,
-    })
-      .format(n)
-      .replace("AOA", "Kz");
+      maximumFractionDigits: 2,
+    }).format(n);
+    return `${formatted} Kz`;
   };
 
   return (
