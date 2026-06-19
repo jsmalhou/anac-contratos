@@ -52,8 +52,12 @@ export default function Departments() {
   };
 
   const formatKz = (v: string | null) => {
-    if (!v) return "Kz 0";
-    return new Intl.NumberFormat("pt-PT", { style: "currency", currency: "AOA", minimumFractionDigits: 0 }).format(parseFloat(v)).replace("AOA", "Kz");
+    if (!v) return "Kz 0,00";
+    const n = parseFloat(v);
+    if (isNaN(n)) return "Kz 0,00";
+    const [intPart, decPart] = n.toFixed(2).split(".");
+    const intFormatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return `Kz ${intFormatted},${decPart}`;
   };
 
   return (
