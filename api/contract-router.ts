@@ -125,13 +125,7 @@ export const contractRouter = createRouter({
     .input(
       z.object({
         contractNumber: z.string().min(1),
-        contractType: z.enum([
-          "aquisicao",
-          "servicos",
-          "obras",
-          "locacao",
-          "outros",
-        ]),
+        contractType: z.string().min(1),
         description: z.string().optional(),
         totalValue: z.string(),
         supplierId: z.number(),
@@ -180,9 +174,7 @@ export const contractRouter = createRouter({
       z.object({
         id: z.number(),
         contractNumber: z.string().min(1).optional(),
-        contractType: z
-          .enum(["aquisicao", "servicos", "obras", "locacao", "outros"])
-          .optional(),
+        contractType: z.string().min(1).optional(),
         description: z.string().optional(),
         totalValue: z.string().optional(),
         supplierId: z.number().optional(),
