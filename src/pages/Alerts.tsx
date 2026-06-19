@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import {
   Bell,
@@ -7,6 +8,7 @@ import {
   Calendar,
   Mail,
   Smartphone,
+  Send,
 } from "lucide-react";
 
 const alertTypeLabels: Record<string, { label: string; color: string; icon: typeof Bell }> = {
@@ -31,13 +33,22 @@ export default function Alerts() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white tracking-wide">
-          ALERTAS E NOTIFICAÇÕES
-        </h1>
-        <p className="text-white/50 text-sm mt-1">
-          Sistema de alertas preventivos para prazos contractuais
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white tracking-wide">
+            ALERTAS E NOTIFICAÇÕES
+          </h1>
+          <p className="text-white/50 text-sm mt-1">
+            Sistema de alertas preventivos para prazos contractuais
+          </p>
+        </div>
+        <Link
+          to="/notificacao/enviar"
+          className="btn-3d px-5 py-2.5 text-sm flex items-center gap-2"
+        >
+          <Send className="w-4 h-4" />
+          Enviar Notificação
+        </Link>
       </div>
 
       {/* Notification Channels Info */}
