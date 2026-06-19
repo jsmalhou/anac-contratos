@@ -206,4 +206,9 @@ export default function EditContract() {
             <Save className="w-4 h-4" />
             {updateMutation.isPending ? "A guardar..." : "Guardar Alterações"}
           </button>
-          <Link to={`/contratos/${id}`} className="btn-3d-secondary px-6 py-2.5 
+          <Link to={`/contratos/${id}`} className="btn-3d-secondary px-6 py-2.5 text-sm">Cancelar</Link>
+        </div>
+      </form>
+    </div>
+  );
+} 
