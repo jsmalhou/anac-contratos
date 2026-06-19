@@ -54,6 +54,12 @@ export default function Dashboard() {
   const { data: charts } = trpc.dashboard.charts.useQuery();
   const { data: recent } = trpc.dashboard.recentContracts.useQuery();
   const { data: expiring } = trpc.dashboard.expiringContracts.useQuery();
+  
+  // Gerar alertas automaticamente ao carregar o dashboard
+  trpc.alertGenerator.check.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+    staleTime: 60000, // 1 minuto
+  });
 
   const formatKz = (v: string | number | null | undefined) => {
     if (v == null) return "Kz 0,00";
