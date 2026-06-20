@@ -16,6 +16,7 @@ import Departments from "./pages/Departments";
 import Roles from "./pages/Roles";
 import ContractTypes from "./pages/ContractTypes";
 import SendNotification from "./pages/SendNotification";
+import EmailNotifications from "./pages/EmailNotifications";
 import Users from "./pages/Users";
 
 function AppLayout({ children }: { children: React.ReactNode }) {
@@ -60,6 +61,7 @@ export default function App() {
         <Route path="/tipos-contrato" element={<ContractTypes />} />
         <Route path="/alertas" element={<Alerts />} />
         <Route path="/notificacao/enviar" element={<SendNotification />} />
+        <Route path="/notificacoes/email" element={<EmailNotifications />} />
         <Route path="/perfil" element={<Profile />} />
         <Route path="/configuracoes" element={<Settings />} />
         <Route path="/utilizadores" element={<Users />} />
