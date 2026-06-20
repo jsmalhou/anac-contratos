@@ -232,6 +232,33 @@ export const alerts = mysqlTable("alerts", {
 
 export type Alert = typeof alerts.$inferSelect;
 
+// ─── Email Logs ───
+export const emailLogs = mysqlTable("emailLogs", {
+  id: serial("id").primaryKey(),
+  recipientEmail: varchar("recipientEmail", { length: 320 }).notNull(),
+  recipientName: varchar("recipientName", { length: 255 }),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  body: text("body"),
+  alertType: mysqlEnum("alertType", [
+    "pagamento_30",
+    "liquidacao_15",
+    "renovacao_7",
+    "critico_3",
+    "irregularidade",
+    "expirado",
+    "personalizado",
+  ]).default("personalizado"),
+  contractId: bigint("contractId", { mode: "number", unsigned: true }),
+  status: mysqlEnum("status", ["pendente", "enviado", "erro"])
+    .default("pendente")
+    .notNull(),
+  errorMessage: text("errorMessage"),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type EmailLog = typeof emailLogs.$inferSelect;
+
 // ─── Audit Log ───
 export const auditLog = mysqlTable("auditLog", {
   id: serial("id").primaryKey(),
