@@ -11,6 +11,7 @@ import {
 import { alertGeneratorRouter } from "./alert-generator-router";
 import { alertDebugRouter } from "./alert-debug-router";
 import { appUserRouter } from "./app-user-router";
+import { emailRouter } from "./email-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -26,6 +27,7 @@ export const appRouter = createRouter({
   alertGenerator: alertGeneratorRouter,
   alertDebug: alertDebugRouter,
   appUser: appUserRouter,
+  email: emailRouter,
 });
 
 export type AppRouter = typeof appRouter;
