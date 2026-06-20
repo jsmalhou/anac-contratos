@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { appUsers } from "@db/schema";
-import { eq, desc, and, ne } from "drizzle-orm";
+import { eq, desc, and, ne, isNull, or } from "drizzle-orm";
 
 export const appUserRouter = createRouter({
   list: publicQuery.query(async () => {
@@ -10,6 +10,7 @@ export const appUserRouter = createRouter({
     return db
       .select()
       .from(appUsers)
+      .where(or(eq(appUsers.isActive, 1), isNull(appUsers.isActive)))
       .orderBy(desc(appUsers.createdAt));
   }),
 
