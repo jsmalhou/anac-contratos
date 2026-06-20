@@ -95,24 +95,7 @@ export const appUserRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       const { id, ...data } = input;
-
-      // Remove undefined values
-      const cleanData = Object.fromEntries(
-        Object.entries(data).filter(([_, v]) => v !== undefined)
-      );
-
-      // Check for duplicate name (excluding current user)
-      if (cleanData.fullName) {
-        const allUsers = await db.select().from(appUsers);
-        const duplicate = allUsers.find(
-          (u) => u.fullName === cleanData.fullName && Number(u.id) !== Number(id)
-        );
-        if (duplicate) {
-          throw new Error(`Ja existe um utilizador com o nome "${cleanData.fullName}"`);
-        }
-      }
-
-      await db.update(appUsers).set(cleanData).where(eq(appUsers.id, id));
+      await db.update(appUsers).set(data).where(eq(appUsers.id, id));
       return { success: true };
     }),
 
