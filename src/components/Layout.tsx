@@ -9,6 +9,7 @@ import {
   Bell,
   Settings,
   LogOut,
+  Mail,
   Menu,
   X,
   ChevronRight,
@@ -21,6 +22,7 @@ const mainNavItems = [
   { path: "/contratos", label: "Contratos", icon: FileText },
   { path: "/fornecedores", label: "Fornecedores", icon: Building2 },
   { path: "/alertas", label: "Alertas", icon: Bell },
+  { path: "/notificacoes/email", label: "Notificações", icon: Mail },
 ];
 
 const configNavItems = [
