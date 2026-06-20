@@ -1,5 +1,5 @@
 name = "anac-contratos"
-main = "dist/boot.js"
+main = "api/worker.ts"
 compatibility_date = "2025-06-19"
 compatibility_flags = ["nodejs_compat"]
 
@@ -7,8 +7,6 @@ compatibility_flags = ["nodejs_compat"]
 [site]
 bucket = "./dist/public"
 
-# Environment variables (add your DATABASE_URL in Cloudflare dashboard or via wrangler secret)
-# [vars]
-# DATABASE_URL = "your-mysql-connection-string"
-
-# Secrets (set via: wrangler secret put DATABASE_URL)
+# Build command - only builds frontend, wrangler bundles the worker
+[build]
+command = "npm run build:frontend"
