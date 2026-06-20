@@ -41,6 +41,7 @@ export const appUserRouter = createRouter({
         roleId: z.number().optional(),
         departmentId: z.number().optional(),
         password: z.string().optional(),
+        avatar: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -49,6 +50,7 @@ export const appUserRouter = createRouter({
         fullName: input.fullName,
         email: input.email,
         phone: input.phone,
+        avatar: input.avatar || null,
         appRole: input.appRole,
         roleId: input.roleId || null,
         departmentId: input.departmentId || null,
@@ -75,6 +77,7 @@ export const appUserRouter = createRouter({
         roleId: z.number().optional(),
         departmentId: z.number().optional(),
         isActive: z.number().optional(),
+        avatar: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
