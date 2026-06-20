@@ -93,10 +93,17 @@ export const appUserRouter = createRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const db = getDb();
-      const { id, ...data } = input;
-      await db.update(appUsers).set(data).where(eq(appUsers.id, id));
-      return { success: true };
+      try {
+        const db = getDb();
+        const { id, ...data } = input;
+        console.log("[appUser.update] id:", id, "type:", typeof id, "data:", JSON.stringify(data));
+        await db.update(appUsers).set(data).where(eq(appUsers.id, id));
+        console.log("[appUser.update] success");
+        return { success: true };
+      } catch (err: any) {
+        console.error("[appUser.update] ERROR:", err.message, err.stack);
+        throw new Error("Update failed: " + err.message);
+      }
     }),
 
   delete: publicQuery
