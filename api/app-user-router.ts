@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createRouter, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import { appUsers } from "@db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, ne } from "drizzle-orm";
 
 export const appUserRouter = createRouter({
   list: publicQuery.query(async () => {
@@ -46,6 +46,17 @@ export const appUserRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
+
+      // Check for duplicate name
+      const [existing] = await db
+        .select()
+        .from(appUsers)
+        .where(eq(appUsers.fullName, input.fullName));
+
+      if (existing) {
+        throw new Error(`Ja existe um utilizador com o nome "${input.fullName}"`);
+      }
+
       const result = await db.insert(appUsers).values({
         fullName: input.fullName,
         email: input.email,
@@ -83,6 +94,24 @@ export const appUserRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       const { id, ...data } = input;
+
+      // Check for duplicate name (excluding current user)
+      if (data.fullName) {
+        const [existing] = await db
+          .select()
+          .from(appUsers)
+          .where(
+            and(
+              eq(appUsers.fullName, data.fullName),
+              ne(appUsers.id, id)
+            )
+          );
+
+        if (existing) {
+          throw new Error(`Ja existe um utilizador com o nome "${data.fullName}"`);
+        }
+      }
+
       await db.update(appUsers).set(data).where(eq(appUsers.id, id));
       return { success: true };
     }),
