@@ -15,7 +15,7 @@ export const appUserRouter = createRouter({
   }),
 
   getById: publicQuery
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.union([z.number(), z.string()]).transform((v) => Number(v)) }))
     .query(async ({ input }) => {
       const db = getDb();
       const [user] = await db
@@ -74,7 +74,7 @@ export const appUserRouter = createRouter({
   update: publicQuery
     .input(
       z.object({
-        id: z.number(),
+        id: z.union([z.number(), z.string()]).transform((v) => Number(v)),
         fullName: z.string().min(1).optional(),
         email: z.string().email().optional(),
         phone: z.string().optional(),
@@ -100,7 +100,7 @@ export const appUserRouter = createRouter({
     }),
 
   delete: publicQuery
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.union([z.number(), z.string()]).transform((v) => Number(v)) }))
     .mutation(async ({ input }) => {
       const db = getDb();
       await db
