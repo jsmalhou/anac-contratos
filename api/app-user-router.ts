@@ -96,29 +96,14 @@ export const appUserRouter = createRouter({
       const db = getDb();
       const { id, ...data } = input;
 
-      // Check for duplicate name (excluding current user) - only if name changed
+      // Check for duplicate name (excluding current user)
       if (data.fullName) {
-        // Get current user to check if name actually changed
-        const [currentUser] = await db
-          .select()
-          .from(appUsers)
-          .where(eq(appUsers.id, id));
-
-        // Only check duplicates if name is different from current
-        if (!currentUser || currentUser.fullName !== data.fullName) {
-          const [existing] = await db
-            .select()
-            .from(appUsers)
-            .where(
-              and(
-                eq(appUsers.fullName, data.fullName),
-                ne(appUsers.id, id)
-              )
-            );
-
-          if (existing) {
-            throw new Error(`Ja existe um utilizador com o nome "${data.fullName}"`);
-          }
+        const allUsers = await db.select().from(appUsers);
+        const duplicate = allUsers.find(
+          (u) => u.fullName === data.fullName && Number(u.id) !== Number(id)
+        );
+        if (duplicate) {
+          throw new Error(`Ja existe um utilizador com o nome "${data.fullName}"`);
         }
       }
 
